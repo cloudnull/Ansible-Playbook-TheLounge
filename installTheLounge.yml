@@ -1,0 +1,146 @@
+---
+# Copyright 2018, Rackspace US, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Install TheLounge
+  hosts: thelounge_hosts
+  become: true
+  vars:
+    node_version: v8.11.1
+    node_url: "https://nodejs.org/dist/{{ node_version }}/node-{{ node_version }}-linux-x64.tar.xz"
+    node_sha256: "6617e245fa0f7fbe0e373e71d543fea878315324ab31dc64b4eba10e42d04c11"
+    node_download_path: "/opt/{{ node_url | basename }}"
+    node_path: "{{ node_download_path | replace('.tar.xz', '') }}"
+    thelounge_example_config: false
+    thelounge_config:
+      public: false
+      port: 6443
+      prefetch: true
+      prefetchStorage: true
+      displayNetwork: true
+
+  pre_tasks:
+
+    - name: Check for node
+      stat:
+        path: /opt/node-{{ node_version }}-linux-x64
+      register: node_check_path
+
+    - name: Install node
+      block:
+        - name: GET node
+          get_url:
+            url: "{{ node_url }}"
+            dest: "{{ node_download_path }}"
+            checksum: "sha256:{{ node_sha256 }}"
+
+        - name: Create node directory
+          file:
+            path: "{{ node_path }}"
+            state: directory
+
+        - name: Unarchive node
+          unarchive:
+            src: "{{ node_download_path }}"
+            dest: "{{ node_path }}"
+            remote_src: yes
+
+        - name: Create node defaults file
+          copy:
+            content: |
+              PATH="${PATH}:{{ node_path }}/bin"
+              NODE_PATH="{{ node_path }}/node_modules"
+            dest: /etc/default/node-{{ node_version }}
+
+        - name: Create node defaults file
+          copy:
+            content: "{}"
+            dest: "{{ node_path }}/package.json"
+      when:
+        - not node_check_path.stat.exists | bool
+
+  tasks:
+    - name: create the system group
+      group:
+        name: "thelounge"
+        state: "present"
+        system: "yes"
+
+    - name: Create the thelounge user
+      user:
+        name: "thelounge"
+        group: "thelounge"
+        comment: "thelounge user"
+        shell: "/bin/false"
+        createhome: "yes"
+        home: "/var/lib/thelounge"
+
+    - name: Create thelounge data path
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: "thelounge"
+        group: "thelounge"
+        mode: "0755"
+      with_items:
+        - "/var/lib/thelounge/sslcert"
+
+    - name: Install thelounge
+      shell: |
+        . /etc/default/node-{{ node_version }}
+        npm install --prefix "{{ node_path }}" thelounge
+
+    - name: Run the systemd service role
+      include_role:
+        name: systemd_service
+        private: true
+      vars:
+        systemd_service_restart_changed: false
+        systemd_user_name: thelounge
+        systemd_group_name: thelounge
+        systemd_services:
+          - service_name: "thelounge"
+            execstarts:
+              - "{{ node_path }}/bin/thelounge start {% for key, value in thelounge_config.items() %} -c '{{ key }}={{ value | to_json }}'{% endfor %}"
+            config_overrides:
+              Service:
+                EnvironmentFile: "/etc/default/node-{{ node_version }}"
+                Environment: "THELOUNGE_HOME=/var/lib/thelounge"
+              Unit:
+                Documentation: "https://thelounge.chat/docs"
+                Wants: network-online.target
+                After: network-online.target
+
+    - name: Check if the example config is enabled.
+      debug:
+        msg: >-
+          The example config was not shipped. To use the example config set the
+          option `-e 'thelounge_example_config=true'`.
+      when:
+        - not thelounge_example_config | bool
+
+    - name: Copy Example config
+      copy:
+        src: thelounge-config.js
+        dest: /var/lib/thelounge/config.js
+      when:
+        - thelounge_example_config | bool
+
+    - name: Installation Finished
+      debug:
+        msg: >-
+          The lounge has been installed. To start the service run
+          `systemctl start thelounge`. Before starting the service it's avised
+          the configuration be setup for the environment. This can be done by
+          editing the file [ /var/lib/thelounge/config.js ].
