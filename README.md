@@ -1,4 +1,4 @@
-#### TheLounge Ansible Playbook  
+## TheLounge Ansible Playbook  
 
 Ansible playbook to deploy "The Lounge".
 
@@ -28,3 +28,17 @@ To enable the provided example config set the variable
 ``` bash
 ansible-playbook -i inventory.ini installTheLounge.yml -e thelounge_example_config=yes
 ```
+
+### Post deployment
+
+Once deployed customize the
+[server configuration](https://thelounge.chat/docs/server/configuration.html) if
+needed and run through the
+[normal user add](https://thelounge.chat/docs/server/users.html) process to
+ensure users have access to the system.
+
+#### Customizing the experience
+
+A custom style sheet is available within this repo, `style-sheet.css`. This file
+is used to make the side bar a little bigger which is useful when joining
+channels with long names.
