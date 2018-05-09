@@ -2,14 +2,6 @@
 
 Ansible playbook to deploy "The Lounge".
 
-* This playbook has external role dependencies. These dependencies can be
-resolved with the ``ansible-galaxy`` command on the
-``ansible-role-requirements.yml`` file.
-
-``` bash
-ansible-galaxy install -r ansible-role-requirements.yml
-```
-
 ### Installing with embedded Ansible
 
 If this is being executed on a system that already has Ansible installed but is
@@ -18,6 +10,18 @@ sourced to grab an embedded version of Ansible prior to executing the service.
 
 ``` bash
 source bootstrap-ansible.sh
+```
+
+##### Manually resolving the dependencies
+
+This playbook has external role dependencies. If Ansible is not installed with
+the `bootstrap-ansible.sh` script these dependencies can be resolved with the
+``ansible-galaxy`` command and the ``ansible-role-requirements.yml`` file.
+
+* Example galaxy execution
+
+``` bash
+ansible-galaxy install -r ansible-role-requirements.yml
 ```
 
 #### Running the playbook
@@ -30,10 +34,10 @@ Once the dependencies have been resolved run the playbook.
 ansible-playbook -i inventory.ini installTheLounge.yml
 ```
 
-Inventory should be modified to meet the needs of the deployment. The local
-inventory will deploy directly on `localhost`.
+* Inventory should be modified to meet the needs of the deployment. The local
+inventory will deploy directly on `localhost` by default.
 
-This playbook can deploy an example configuration file with sensible defaults.
+* This playbook can deploy an example configuration file with sensible defaults.
 To enable the provided example config set the variable
 `thelounge_example_config` to `true` like so.
 
