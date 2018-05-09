@@ -102,6 +102,9 @@
         group: "thelounge"
         mode: "0755"
 
+    # NOTE(Cloudnull): While there is an npm install module, it's broken.
+    #                  See https://github.com/ansible/ansible/issues/29308 for
+    #                  more on the issue.
     - name: Install TheLounge
       command: "npm install -g --unsafe-perm --prefix {{ node_path }} thelounge"
       environment:
