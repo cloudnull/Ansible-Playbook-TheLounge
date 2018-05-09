@@ -31,12 +31,12 @@ if [[ ! -d "${HOME}/ansible25/repositories/roles/systemd_service" ]]; then
 fi
 
 if [[ -f "/etc/openstack_deploy/openstack_inventory.json" ]]; then
-  mkdir -p ~/ansible25/inventrory
-  cat > ~/ansible25/inventrory/openstack_inventory.sh <<EOF
+  mkdir -p ~/ansible25/inventory
+  cat > ~/ansible25/inventory/openstack_inventory.sh <<EOF
 #!/usr/bin/env bash
 cat /etc/openstack_deploy/openstack_inventory.json
 EOF
-  chmod +x ~/ansible25/inventrory/openstack_inventory.sh
+  chmod +x ~/ansible25/inventory/openstack_inventory.sh
 fi
 
 export ANSIBLE_ROLES_PATH="${HOME}/ansible25/repositories/roles"
