@@ -59,11 +59,11 @@ Once `TheLounge` has been deployed the system will have a new user named
 **thelounge**. To modify users or run server configuration commands, switch to
 **thelounge** user and run the `thelounge` commands normally.
 
-See the
+* See the
 [server configuration](https://thelounge.chat/docs/server/configuration.html)
 documentation for more details on what can be setup.
 
-See the [user](https://thelounge.chat/docs/server/users.html) documentation for
+* See the [user](https://thelounge.chat/docs/server/users.html) documentation for
 more details on managing local users.
 
 ##### Customizing the experience
