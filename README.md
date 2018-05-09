@@ -2,13 +2,17 @@
 
 Ansible playbook to deploy "The Lounge".
 
-* This playbook has external role dependencies. These dependenvies can be resolved
-with the ``ansible-galaxy`` command on the ``ansible-role-requirements.yml``
-file.
+* This playbook has external role dependencies. These dependencies can be
+resolved with the ``ansible-galaxy`` command on the
+``ansible-role-requirements.yml`` file.
 
 ``` bash
 ansible-galaxy install -r ansible-role-requirements.yml
 ```
+
+If this is being executed on a system that already has Ansible installed but is
+incompatible with these playbooks the script `bootstrap-ansible.sh` can be
+sourced to grab an embedded version of Ansible prior to executing the service.
 
 Once the dependencies have been resolved run the playbook.
 

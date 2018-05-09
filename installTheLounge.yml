@@ -34,7 +34,7 @@
 
     - name: Check for node
       stat:
-        path: /opt/node-{{ node_version }}-linux-x64
+        path: "{{ node_download_path }}"
       register: node_check_path
 
     - name: Install node
@@ -45,15 +45,10 @@
             dest: "{{ node_download_path }}"
             checksum: "sha256:{{ node_sha256 }}"
 
-        - name: Create node directory
-          file:
-            path: "{{ node_path }}"
-            state: directory
-
         - name: Unarchive node
           unarchive:
             src: "{{ node_download_path }}"
-            dest: "{{ node_path }}"
+            dest: "/opt/"
             remote_src: yes
 
         - name: Create node defaults file
@@ -97,9 +92,10 @@
         - "/var/lib/thelounge/sslcert"
 
     - name: Install thelounge
-      shell: |
-        . /etc/default/node-{{ node_version }}
-        npm install --prefix "{{ node_path }}" thelounge
+      command: npm install -g --unsafe-perm --prefix "{{ node_path }}" thelounge
+      environment:
+        PATH: "${PATH}:{{ node_path }}/bin"
+        NODE_PATH: "{{ node_path }}/node_modules"
 
     - name: Run the systemd service role
       include_role:

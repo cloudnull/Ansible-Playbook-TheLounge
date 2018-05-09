@@ -13,19 +13,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if [[ ! -f "~/ansible25/bin/ansible" ]]; then
+if [[ ! -e "${HOME}/ansible25/bin/ansible" ]]; then
   apt-get update
-  apt-get -y install python3-virtualenv || apt-get -y install python-virtualenv
+  apt-get -y install python3-virtualenv python-virtualenv
   virtualenv --python=/usr/bin/python3 ~/ansible25 || virtualenv --python=/usr/bin/python2 ~/ansible25
   ~/ansible25/bin/pip install --upgrade ansible==2.5.2.0 --isolated
 fi
 
-if [[ ! -d "~/ansible25/repositories/ansible-config_template" ]]; then
+if [[ ! -d "${HOME}/ansible25/repositories/ansible-config_template" ]]; then
   mkdir -p ~/ansible25/repositories
   git clone https://github.com/openstack/ansible-config_template ~/ansible25/repositories/ansible-config_template
 fi
 
-if [[ ! -d "~/ansible25/repositories/roles/systemd_service" ]]; then
+if [[ ! -d "${HOME}/ansible25/repositories/roles/systemd_service" ]]; then
   mkdir -p ~/ansible25/repositories
   git clone https://github.com/openstack/ansible-role-systemd_service ~/ansible25/repositories/roles/systemd_service
 fi
@@ -39,5 +39,6 @@ EOF
   chmod +x ~/ansible25/inventrory/openstack_inventory.sh
 fi
 
-export ANSIBLE_ROLES_PATH="~/ansible25/repositories/roles"
-export ANSIBLE_ACTION_PLUGINS="~/ansible25/repositories/ansible-config_template/action"
+export ANSIBLE_ROLES_PATH="${HOME}/ansible25/repositories/roles"
+export ANSIBLE_ACTION_PLUGINS="${HOME}/ansible25/repositories/ansible-config_template/action"
+echo "Ansible can be found: ${HOME}/ansible25/bin"
