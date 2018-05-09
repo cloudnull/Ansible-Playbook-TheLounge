@@ -1,25 +1,16 @@
 #main {
-        left: 255px;
+  left: 255px;
 }
 
 #sidebar {
-        width: 255px;
+  width: 255px;
 }
 
 #footer {
-        width: 255px;
+  width: 255px;
 }
 
-
 @media (max-width: 768px) {
-	/**
-	  * TODO Replace this with `@media (hover: hover)` when Firefox supports it
-	  * See:
-	  * - http://stackoverflow.com/a/28058919/1935861
-	  * - http://caniuse.com/#feat=css-media-interaction
-	  * - https://www.w3.org/TR/mediaqueries-4/
-	  * - https://developer.mozilla.org/en-US/docs/Web/CSS/@media/hover
-	  */
 	.tooltipped-no-touch:hover::before,
 	.tooltipped-no-touch:hover::after {
 		visibility: hidden;
@@ -109,8 +100,24 @@
 	}
 }
 
-#chat.colored-nicks .self .user.color-19 {
-    color: #84ce88;
-    font-size: 15px;
-    font-weight: bold;
+#chat.colored-nicks .user.color-19 {
+  color: #00ff1d;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+#chat .self {
+    color: #000;
+
+
+}
+
+#chat .error,
+#chat .error .from,
+#chat .channel .highlight,
+#chat .channel .highlight .from,
+#chat .channel .highlight .text {
+  color: #00dcff;
+  font-weight: bold;
+  font-size: 15px;
 }
