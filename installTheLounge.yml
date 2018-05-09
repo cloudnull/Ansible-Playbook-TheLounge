@@ -23,6 +23,7 @@
     node_download_path: "/opt/{{ node_url | basename }}"
     node_path: "{{ node_download_path | replace('.tar.xz', '') }}"
     thelounge_example_config: false
+    thelounge_package_state: present
     thelounge_config:
       public: false
       port: 6443
@@ -30,8 +31,35 @@
       prefetchStorage: true
       displayNetwork: true
 
-  pre_tasks:
+  handlers:
+    - name: Check if the example config is enabled.
+      debug:
+        msg: >-
+          The example config was not shipped. To use the example config set the
+          option `-e 'thelounge_example_config=true'`.
+      when:
+        - not thelounge_example_config | bool
+      listen: notice
 
+    - name: Installation Notice
+      debug:
+        msg: >-
+          The lounge has been installed. To start the service run
+          `systemctl start thelounge`. Before starting the service it's avised
+          to update the configuration for the environment. This can be done by
+          editing the file [ /var/lib/thelounge/config.js ].
+      listen: notice
+
+    - name: Installation Complete
+      debug:
+        msg: >-
+          Before starting `thelounge` make sure to add users to the system.
+          To add users to the system change to `thelounge` user and run
+          `thelounge add user`. More documentation can be found here
+          `https://thelounge.chat/docs`.
+      listen: notice
+
+  pre_tasks:
     - name: Check for node
       stat:
         path: "{{ node_path }}"
@@ -107,9 +135,13 @@
     #                  more on the issue.
     - name: Install TheLounge
       command: "npm install -g --unsafe-perm --prefix {{ node_path }} thelounge"
+      args:
+        creates: "{{ (thelounge_package_state == 'present') | ternary(node_path + '/bin/thelounge', 'notthelounge') }}"
       environment:
         PATH: "${PATH}:{{ node_path }}/bin"
         NODE_PATH: "{{ node_path }}/node_modules"
+      notify:
+        - notice
 
     - name: Run the systemd service role
       include_role:
@@ -138,27 +170,3 @@
         dest: /var/lib/thelounge/config.js
       when:
         - thelounge_example_config | bool
-
-    - name: Check if the example config is enabled.
-      debug:
-        msg: >-
-          The example config was not shipped. To use the example config set the
-          option `-e 'thelounge_example_config=true'`.
-      when:
-        - not thelounge_example_config | bool
-
-    - name: Installation Notice
-      debug:
-        msg: >-
-          The lounge has been installed. To start the service run
-          `systemctl start thelounge`. Before starting the service it's avised
-          to update the configuration for the environment. This can be done by
-          editing the file [ /var/lib/thelounge/config.js ].
-
-    - name: Installation Complete
-      debug:
-        msg: >-
-          Before starting `thelounge` make sure to add users to the system.
-          To add users to the system change to `thelounge` user and run
-          `thelounge add user`. More documentation can be found here
-          `https://thelounge.chat/docs`.

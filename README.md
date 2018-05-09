@@ -45,6 +45,14 @@ To enable the provided example config set the variable
 ansible-playbook -i inventory.ini installTheLounge.yml -e thelounge_example_config=yes
 ```
 
+By default the playbook will only install `thelounge`. If you need to re-install
+`thelounge` on a subsequent playbook run, set the package state option to
+"latest".
+
+``` bash
+ansible-playbook -i inventory.ini installTheLounge.yml -e thelounge_package_state=latest
+```
+
 #### Post deployment
 
 Once `TheLounge` has been deployed the system will have a new user named
