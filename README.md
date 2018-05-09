@@ -47,11 +47,16 @@ ansible-playbook -i inventory.ini installTheLounge.yml -e thelounge_example_conf
 
 #### Post deployment
 
-Once deployed customize the
-[server configuration](https://thelounge.chat/docs/server/configuration.html) if
-needed and run through the
-[normal user add](https://thelounge.chat/docs/server/users.html) process to
-ensure users have access to the system.
+Once `TheLounge` has been deployed the system will have a new user named
+**thelounge**. To modify users or run server configuration commands, switch to
+**thelounge** user and run the `thelounge` commands normally.
+
+See the
+[server configuration](https://thelounge.chat/docs/server/configuration.html)
+documentation for more details on what can be setup.
+
+See the [user](https://thelounge.chat/docs/server/users.html) documentation for
+more details on managing local users.
 
 ##### Customizing the experience
 
