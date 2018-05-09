@@ -18,10 +18,10 @@ export ANSIBLE_EMBED_HOME="${HOME}/ansible25"
 if [[ ! -e "${ANSIBLE_EMBED_HOME}/bin/ansible" ]]; then
   apt-get update
   apt-get -y install python3-virtualenv python-virtualenv
-  if [[ -f "/usr/bin/python3" ]]; then
-    virtualenv --python="/usr/bin/python3" "${ANSIBLE_EMBED_HOME}"
-  elif [[ -f "/usr/bin/python2" ]]; then
+  if [[ -f "/usr/bin/python2" ]]; then
     virtualenv --python="/usr/bin/python2" "${ANSIBLE_EMBED_HOME}"
+  elif [[ -f "/usr/bin/python3" ]]; then
+    virtualenv --python="/usr/bin/python3" "${ANSIBLE_EMBED_HOME}"
   else
     virtualenv "${ANSIBLE_EMBED_HOME}"
   fi
