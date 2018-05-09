@@ -2,6 +2,8 @@
 
 Ansible playbook to deploy "The Lounge".
 
+----
+
 ### Installing with embedded Ansible
 
 If this is being executed on a system that already has Ansible installed but is
