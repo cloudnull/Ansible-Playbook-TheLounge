@@ -13,32 +13,52 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if [[ ! -e "${HOME}/ansible25/bin/ansible" ]]; then
+export ANSIBLE_EMBED_HOME="${HOME}/ansible25"
+
+if [[ ! -e "${ANSIBLE_EMBED_HOME}/bin/ansible" ]]; then
   apt-get update
   apt-get -y install python3-virtualenv python-virtualenv
-  virtualenv --python=/usr/bin/python3 ~/ansible25 || virtualenv --python=/usr/bin/python2 ~/ansible25
-  ~/ansible25/bin/pip install --upgrade ansible==2.5.2.0 --isolated
+  if [[ -f "/usr/bin/python3" ]]; then
+    virtualenv --python="/usr/bin/python3" "${ANSIBLE_EMBED_HOME}"
+  elif [[ -f "/usr/bin/python2" ]]; then
+    virtualenv --python="/usr/bin/python2" "${ANSIBLE_EMBED_HOME}"
+  else
+    virtualenv "${ANSIBLE_EMBED_HOME}"
+  fi
+  eval "${ANSIBLE_EMBED_HOME}/bin/pip install --upgrade ansible==2.5.2.0 --isolated"
 fi
 
-if [[ ! -d "${HOME}/ansible25/repositories/ansible-config_template" ]]; then
-  mkdir -p ~/ansible25/repositories
-  git clone https://github.com/openstack/ansible-config_template ~/ansible25/repositories/ansible-config_template
+if [[ ! -d "${ANSIBLE_EMBED_HOME}/repositories/ansible-config_template" ]]; then
+  mkdir -p "${ANSIBLE_EMBED_HOME}/repositories"
+  git clone https://github.com/openstack/ansible-config_template "${ANSIBLE_EMBED_HOME}/repositories/ansible-config_template"
 fi
 
-if [[ ! -d "${HOME}/ansible25/repositories/roles/systemd_service" ]]; then
-  mkdir -p ~/ansible25/repositories
-  git clone https://github.com/openstack/ansible-role-systemd_service ~/ansible25/repositories/roles/systemd_service
+if [[ ! -d "${ANSIBLE_EMBED_HOME}/repositories/roles/systemd_service" ]]; then
+  mkdir -p "${ANSIBLE_EMBED_HOME}/repositories"
+  git clone https://github.com/openstack/ansible-role-systemd_service "${ANSIBLE_EMBED_HOME}/repositories/roles/systemd_service"
 fi
 
 if [[ -f "/etc/openstack_deploy/openstack_inventory.json" ]]; then
-  mkdir -p ~/ansible25/inventory
-  cat > ~/ansible25/inventory/openstack_inventory.sh <<EOF
+  if [[ ! -f "${ANSIBLE_EMBED_HOME}/inventory/openstack_inventory.sh" ]]; then
+    mkdir -p "${ANSIBLE_EMBED_HOME}/inventory"
+    cat > "${ANSIBLE_EMBED_HOME}/inventory/openstack_inventory.sh" <<EOF
 #!/usr/bin/env bash
 cat /etc/openstack_deploy/openstack_inventory.json
 EOF
-  chmod +x ~/ansible25/inventory/openstack_inventory.sh
+    chmod +x "${ANSIBLE_EMBED_HOME}/inventory/openstack_inventory.sh"
+  fi
+
+  export ANSIBLE_INVENTORY="${ANSIBLE_EMBED_HOME}/inventory/openstack_inventory.sh"
+  echo "env ANSIBLE_INVENTORY set"
 fi
 
-export ANSIBLE_ROLES_PATH="${HOME}/ansible25/repositories/roles"
-export ANSIBLE_ACTION_PLUGINS="${HOME}/ansible25/repositories/ansible-config_template/action"
-echo "Ansible can be found: ${HOME}/ansible25/bin"
+export ANSIBLE_ROLES_PATH="${ANSIBLE_EMBED_HOME}/repositories/roles"
+echo "env ANSIBLE_ACTION_PLUGINS set"
+
+export ANSIBLE_ACTION_PLUGINS="${ANSIBLE_EMBED_HOME}/repositories/ansible-config_template/action"
+echo "env ANSIBLE_ROLES_PATH set"
+
+echo "Ansible can be found: ${ANSIBLE_EMBED_HOME}/bin"
+
+source ${ANSIBLE_EMBED_HOME}/bin/activate
+echo "Embedded Ansible has been activated. Run 'deactivate' to leave the embedded environment".

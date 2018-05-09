@@ -10,9 +10,17 @@ resolved with the ``ansible-galaxy`` command on the
 ansible-galaxy install -r ansible-role-requirements.yml
 ```
 
+### Installing with embedded Ansible
+
 If this is being executed on a system that already has Ansible installed but is
 incompatible with these playbooks the script `bootstrap-ansible.sh` can be
 sourced to grab an embedded version of Ansible prior to executing the service.
+
+``` bash
+source bootstrap-ansible.sh
+```
+
+#### Running the playbook
 
 Once the dependencies have been resolved run the playbook.
 
@@ -33,7 +41,7 @@ To enable the provided example config set the variable
 ansible-playbook -i inventory.ini installTheLounge.yml -e thelounge_example_config=yes
 ```
 
-### Post deployment
+#### Post deployment
 
 Once deployed customize the
 [server configuration](https://thelounge.chat/docs/server/configuration.html) if
@@ -41,7 +49,7 @@ needed and run through the
 [normal user add](https://thelounge.chat/docs/server/users.html) process to
 ensure users have access to the system.
 
-#### Customizing the experience
+##### Customizing the experience
 
 A custom style sheet is available within this repo, `style-sheet.css`. This file
 is used to make the side bar a little bigger which is useful when joining

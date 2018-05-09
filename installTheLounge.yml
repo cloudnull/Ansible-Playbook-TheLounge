@@ -77,19 +77,30 @@
         name: "thelounge"
         group: "thelounge"
         comment: "thelounge user"
-        shell: "/bin/false"
+        shell: "/bin/bash"
         createhome: "yes"
         home: "/var/lib/thelounge"
 
+    - name: Update thelounge bashrc
+      lineinfile:
+        path: "/var/lib/thelounge/.bashrc"
+        regexp: '^export {{ item.key }}.*'
+        line: 'export {{ item.key }}="{{ item.value }}"'
+      with_items:
+        - key: "THELOUNGE_HOME"
+          value: "/var/lib/thelounge"
+        - key: "PATH"
+          value: "${PATH}:{{ node_path }}/bin"
+        - key: "NODE_PATH"
+          value: "{{ node_path }}/node_modules"
+
     - name: Create thelounge data path
       file:
-        path: "{{ item }}"
+        path: "/var/lib/thelounge/sslcert"
         state: directory
         owner: "thelounge"
         group: "thelounge"
         mode: "0755"
-      with_items:
-        - "/var/lib/thelounge/sslcert"
 
     - name: Install thelounge
       command: npm install -g --unsafe-perm --prefix "{{ node_path }}" thelounge
@@ -118,6 +129,13 @@
                 Wants: network-online.target
                 After: network-online.target
 
+    - name: Copy Example config
+      copy:
+        src: thelounge-config.js
+        dest: /var/lib/thelounge/config.js
+      when:
+        - thelounge_example_config | bool
+
     - name: Check if the example config is enabled.
       debug:
         msg: >-
@@ -126,17 +144,18 @@
       when:
         - not thelounge_example_config | bool
 
-    - name: Copy Example config
-      copy:
-        src: thelounge-config.js
-        dest: /var/lib/thelounge/config.js
-      when:
-        - thelounge_example_config | bool
-
-    - name: Installation Finished
+    - name: Installation Notice
       debug:
         msg: >-
           The lounge has been installed. To start the service run
           `systemctl start thelounge`. Before starting the service it's avised
-          the configuration be setup for the environment. This can be done by
+          to update the configuration for the environment. This can be done by
           editing the file [ /var/lib/thelounge/config.js ].
+
+    - name: Installation Complete
+      debug:
+        msg: >-
+          Before starting `thelounge` make sure to add users to the system.
+          To add users to the system change to `thelounge` user and run
+          `thelounge add user`. More documentation can be found here
+          `https://thelounge.chat/docs`.
