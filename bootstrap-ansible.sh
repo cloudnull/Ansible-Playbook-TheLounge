@@ -25,6 +25,7 @@ if [[ ! -e "${ANSIBLE_EMBED_HOME}/bin/ansible" ]]; then
   else
     virtualenv "${ANSIBLE_EMBED_HOME}"
   fi
+  eval "${ANSIBLE_EMBED_HOME}/bin/pip install --upgrade --force pip"
   eval "${ANSIBLE_EMBED_HOME}/bin/pip install --upgrade ansible==2.5.2.0 --isolated"
 fi
 
