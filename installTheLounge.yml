@@ -34,7 +34,7 @@
 
     - name: Check for node
       stat:
-        path: "{{ node_download_path }}"
+        path: "{{ node_path }}"
       register: node_check_path
 
     - name: Install node
@@ -102,8 +102,8 @@
         group: "thelounge"
         mode: "0755"
 
-    - name: Install thelounge
-      command: npm install -g --unsafe-perm --prefix "{{ node_path }}" thelounge
+    - name: Install TheLounge
+      command: "npm install -g --unsafe-perm --prefix {{ node_path }} thelounge"
       environment:
         PATH: "${PATH}:{{ node_path }}/bin"
         NODE_PATH: "{{ node_path }}/node_modules"
