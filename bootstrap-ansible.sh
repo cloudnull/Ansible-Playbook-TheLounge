@@ -53,13 +53,15 @@ EOF
   echo "env ANSIBLE_INVENTORY set"
 fi
 
+export ANSIBLE_HOST_KEY_CHECKING="False"
+echo "env ANSIBLE_HOST_KEY_CHECKING set"
+
 export ANSIBLE_ROLES_PATH="${ANSIBLE_EMBED_HOME}/repositories/roles"
 echo "env ANSIBLE_ACTION_PLUGINS set"
 
 export ANSIBLE_ACTION_PLUGINS="${ANSIBLE_EMBED_HOME}/repositories/ansible-config_template/action"
 echo "env ANSIBLE_ROLES_PATH set"
 
-echo "Ansible can be found: ${ANSIBLE_EMBED_HOME}/bin"
-
 source ${ANSIBLE_EMBED_HOME}/bin/activate
+echo "Ansible can be found: ${ANSIBLE_EMBED_HOME}/bin"
 echo "Embedded Ansible has been activated. Run 'deactivate' to leave the embedded environment".
