@@ -166,7 +166,14 @@
 
     - name: Copy Example config
       copy:
-        src: thelounge-config.js
-        dest: /var/lib/thelounge/config.js
+        src: "extras/thelounge-config.js"
+        dest: "/var/lib/thelounge/config.js"
       when:
         - thelounge_example_config | bool
+
+    - name: Install TheLounge Themes
+      command: "thelounge install thelounge-theme-solarized"
+      args:
+        creates: "{{ (thelounge_package_state == 'present') | ternary("/var/lib/thelounge/packages/node_modules/thelounge-theme-solarized", 'notthelounge') }}"
+      become: yes
+      become_user: "thelounge"

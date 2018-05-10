@@ -70,6 +70,6 @@ more details on managing local users.
 
 ##### Customizing the experience
 
-A custom style sheet is available within this repo, `style-sheet.css`. This file
-is used to make the side bar a little bigger which is useful when joining
-channels with long names.
+A custom style sheet is available within this repo, `extras/style-sheet.css`.
+This file is used to make the side bar a little bigger which is useful when
+joining channels with long names.
